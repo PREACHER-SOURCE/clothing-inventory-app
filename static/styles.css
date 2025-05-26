@@ -1,0 +1,295 @@
+/* Reset and base */
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    line-height: 1.5;
+  }
+  
+  /* Container */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Headings */
+  h1, h2 {
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 20px;
+  }
+  
+  /* Logout button */
+  .logout-btn {
+    float: right;
+    background-color: #ff6b6b;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .logout-btn:hover {
+    background-color: #e14c4c;
+  }
+  
+  /* Clear floats */
+  .container::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* Messages */
+  .message {
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  /* Forms */
+  form {
+    margin-bottom: 30px;
+  }
+  
+  input[type="text"], input[type="password"], input[type="number"] {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px 15px;
+    margin: 10px 15px 15px 0;
+    border: 1.8px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    outline: none;
+  }
+  
+  input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  }
+  
+  /* Buttons */
+  button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+  }
+  
+  button:hover {
+    background-color: #357abd;
+  }
+  
+  /* Search form */
+  .search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 35px;
+  }
+  
+  .search-form input[type="text"] {
+    flex-grow: 1;
+    max-width: 320px;
+    margin: 0;
+  }
+  
+  .search-form button {
+    flex-grow: 0;
+    margin: 0;
+  }
+  
+  /* Add form */
+  .add-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  
+  .add-form input[type="text"] {
+    flex: 1 1 180px;
+    max-width: 220px;
+  }
+  
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px; /* spacing between rows */
+  }
+  
+  thead tr {
+    background-color: #4a90e2;
+    color: #fff;
+    border-radius: 12px;
+  }
+  
+  thead th {
+    text-align: left;
+    padding: 12px 18px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  
+  tbody tr {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.05);
+    border-radius: 12px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  tbody tr:hover {
+    box-shadow: 0 8px 15px rgb(0 0 0 / 0.1);
+  }
+  
+  tbody td {
+    padding: 12px 18px;
+    vertical-align: middle;
+    font-size: 14px;
+    border: none; /* no lines inside rows */
+  }
+  
+  /* Sold item style */
+  tr.sold {
+    color: #aaa;
+    text-decoration: line-through;
+    font-style: italic;
+    background-color: #f8f9fa;
+  }
+  
+  /* Action buttons */
+  .btn {
+    padding: 8px 15px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s ease;
+    font-size: 13px;
+    display: inline-block;
+    margin-right: 6px;
+  }
+  
+  .sold-btn {
+    background-color: #f39c12;
+  }
+  
+  .sold-btn:hover {
+    background-color: #d47e09;
+  }
+  
+  .delete-btn {
+    background-color: #e74c3c;
+  }
+  
+  .delete-btn:hover {
+    background-color: #c0392b;
+  }
+  
+  /* Login container */
+  .login-container {
+    width: 350px;
+    margin: 100px auto;
+    padding: 40px 35px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .login-container h2 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 1.8px solid #ccc;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .login-container input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  }
+  
+  .login-container button {
+    width: 100%;
+    background-color: #4a90e2;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 30px;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-container button:hover {
+    background-color: #357abd;
+  }
+  
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    .container {
+      padding: 25px 20px;
+    }
+  
+    .add-form, .search-form {
+      flex-direction: column;
+    }
+  
+    .add-form input[type="text"],
+    .search-form input[type="text"],
+    .search-form button,
+    .add-form button {
+      max-width: 100%;
+      margin: 0 0 12px 0;
+    }
+  
+    .logout-btn {
+      float: none;
+      display: block;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  }
+  

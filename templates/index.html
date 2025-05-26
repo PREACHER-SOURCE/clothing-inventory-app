@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ session['user'] }}!</h1>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <!-- Search Form -->
+        <form method="POST" class="search-form">
+            <input type="text" name="search_code" placeholder="Search by Item Code" value="{{ search_code }}">
+            <button type="submit" name="search">Search</button>
+            <button type="submit" name="reset" formnovalidate formaction="{{ url_for('index') }}">Reset</button>
+        </form>
+
+        <!-- Add Item Form -->
+        <h2>Add New Item</h2>
+        <form method="POST" class="add-form">
+            <input type="text" name="item_code" placeholder="Item Code (e.g. A001)" required>
+            <input type="text" name="item_name" placeholder="Item Name" required>
+            <input type="text" name="item_desc" placeholder="Description">
+            <input type="text" name="item_price" placeholder="Price" required>
+            <input type="text" name="item_sizes" placeholder="Sizes (comma separated)">
+            <button type="submit" name="add">Add Item</button>
+        </form>
+
+        <!-- Inventory Table -->
+        <h2>Inventory List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Code</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Sizes</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for code, item in inventory.items() %}
+                <tr class="{{ 'sold' if item.sold }}">
+                    <td>{{ code }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>${{ "%.2f"|format(item.price) }}</td>
+                    <td>{{ item.sizes | join(', ') }}</td>
+                    <td>{{ 'Sold' if item.sold else 'Available' }}</td>
+                    <td>
+                        {% if not item.sold %}
+                        <a href="{{ url_for('mark_sold', code=code) }}" class="btn sold-btn">Mark Sold</a>
+                        {% endif %}
+                        <a href="{{ url_for('delete_item', code=code) }}" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete {{ code }}?')">Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">No items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
