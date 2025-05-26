@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-app.secret_key = 'your_super_secret_key'  # Change this to a random secret key for sessions
+import os
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret")
 
 # Hardcoded user credentials for demo
 USER_CREDENTIALS = {
