@@ -27,14 +27,15 @@ class Item(db.Model):
 
 # Create tables and add initial data if needed
 def create_tables():
-    db.create_all()
-    # Add default user if not exists
-    if not User.query.filter_by(username='admin').first():
-        user = User(username='admin', password='pass123')
-        db.session.add(user)
-        db.session.commit()
+    with app.app_context():
+        db.create_all()
+        # Add default user if not exists
+        if not User.query.filter_by(username='admin').first():
+            user = User(username='admin', password='pass123')
+            db.session.add(user)
+            db.session.commit()
 
-app.before_first_request(create_tables)
+create_tables()  # Run once at app startup
 
 # Login decorator
 from functools import wraps
