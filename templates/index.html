@@ -46,19 +46,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for code, item in inventory.items() %}
+                {% for item in inventory %}
                 <tr class="{{ 'sold' if item.sold }}">
-                    <td>{{ code }}</td>
+                    <td>{{ item.item_code }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>${{ "%.2f"|format(item.price) }}</td>
-                    <td>{{ item.sizes | join(', ') }}</td>
+                    <td>{{ item.sizes }}</td>
                     <td>{{ 'Sold' if item.sold else 'Available' }}</td>
                     <td>
                         {% if not item.sold %}
-                        <a href="{{ url_for('mark_sold', code=code) }}" class="btn sold-btn">Mark Sold</a>
+                        <a href="{{ url_for('mark_sold', code=item.item_code) }}" class="btn sold-btn">Mark Sold</a>
                         {% endif %}
-                        <a href="{{ url_for('delete_item', code=code) }}" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete {{ code }}?')">Delete</a>
+                        <a href="{{ url_for('delete_item', code=item.item_code) }}" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete {{ item.item_code }}?')">Delete</a>
                     </td>
                 </tr>
                 {% else %}
