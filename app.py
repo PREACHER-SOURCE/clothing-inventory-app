@@ -26,7 +26,6 @@ class Item(db.Model):
     sold = db.Column(db.Boolean, default=False)
 
 # Create tables and add initial data if needed
-@app.before_first_request
 def create_tables():
     db.create_all()
     # Add default user if not exists
@@ -34,6 +33,8 @@ def create_tables():
         user = User(username='admin', password='pass123')
         db.session.add(user)
         db.session.commit()
+
+app.before_first_request(create_tables)
 
 # Login decorator
 from functools import wraps
