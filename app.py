@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret")
 
 # Setup database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inventory.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgresql://clothing_osd4_user:AuDNFQ6NR7OUSY6RHWCMDk3U8SduDNM9@dpg-d0qefo15pdvs73ahqc90-a/clothing_osd4')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
