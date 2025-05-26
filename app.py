@@ -110,6 +110,7 @@ def index():
                         message = "Price must be a valid number."
             else:
                 message = "Item code, name and price are required."
+    print(type(filtered_inventory))
 
     return render_template('index.html', inventory=filtered_inventory, message=message, search_code=search_code)
 
