@@ -1,23 +1,43 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
-import os
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret")
 
-# Hardcoded user credentials for demo
-USER_CREDENTIALS = {
-    'username': 'admin',
-    'password': 'pass123'
-}
+# Setup database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inventory.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Inventory: key is item_code; values are dicts with item info + 'sold' status
-inventory = {
-    'A001': {'name': 'Red T-Shirt', 'description': 'Comfortable cotton t-shirt', 'price': 15.99, 'sizes': ['S', 'M', 'L'], 'sold': False},
-    'B002': {'name': 'Blue Jeans', 'description': 'Stylish denim jeans', 'price': 39.99, 'sizes': ['M', 'L', 'XL'], 'sold': False}
-}
+db = SQLAlchemy(app)
 
+# Models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+
+class Item(db.Model):
+    item_code = db.Column(db.String(10), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255))
+    price = db.Column(db.Float, nullable=False)
+    sizes = db.Column(db.String(100))  # store sizes as comma-separated string
+    sold = db.Column(db.Boolean, default=False)
+
+# Create tables and add initial data if needed
+@app.before_first_request
+def create_tables():
+    db.create_all()
+    # Add default user if not exists
+    if not User.query.filter_by(username='admin').first():
+        user = User(username='admin', password='pass123')
+        db.session.add(user)
+        db.session.commit()
+
+# Login decorator
+from functools import wraps
 def login_required(f):
-    from functools import wraps
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user' not in session:
@@ -30,7 +50,8 @@ def login():
     if request.method == 'POST':
         uname = request.form['username']
         pwd = request.form['password']
-        if uname == USER_CREDENTIALS['username'] and pwd == USER_CREDENTIALS['password']:
+        user = User.query.filter_by(username=uname, password=pwd).first()
+        if user:
             session['user'] = uname
             return redirect(url_for('index'))
         else:
@@ -48,17 +69,15 @@ def logout():
 def index():
     message = ''
     search_code = ''
-    filtered_inventory = inventory
+    filtered_inventory = Item.query.all()
 
-    # Handle search
     if request.method == 'POST':
         if 'search' in request.form:
             search_code = request.form['search_code'].strip().upper()
             if search_code:
-                filtered_inventory = {code: item for code, item in inventory.items() if code == search_code}
+                filtered_inventory = Item.query.filter_by(item_code=search_code).all()
                 if not filtered_inventory:
                     message = f"No item found with code '{search_code}'"
-        # Handle add new item
         elif 'add' in request.form:
             code = request.form['item_code'].strip().upper()
             name = request.form['item_name'].strip()
@@ -67,19 +86,23 @@ def index():
             sizes = request.form['item_sizes'].strip()
 
             if code and name and price:
-                if code in inventory:
+                existing_item = Item.query.filter_by(item_code=code).first()
+                if existing_item:
                     message = f"Item code '{code}' already exists!"
                 else:
                     try:
                         price_val = float(price)
-                        sizes_list = [s.strip().upper() for s in sizes.split(',')] if sizes else []
-                        inventory[code] = {
-                            'name': name,
-                            'description': desc,
-                            'price': price_val,
-                            'sizes': sizes_list,
-                            'sold': False
-                        }
+                        sizes_str = ','.join([s.strip().upper() for s in sizes.split(',')]) if sizes else ''
+                        new_item = Item(
+                            item_code=code,
+                            name=name,
+                            description=desc,
+                            price=price_val,
+                            sizes=sizes_str,
+                            sold=False
+                        )
+                        db.session.add(new_item)
+                        db.session.commit()
                         message = f"Added item '{name}' with code '{code}'."
                     except ValueError:
                         message = "Price must be a valid number."
@@ -92,16 +115,20 @@ def index():
 @login_required
 def delete_item(code):
     code = code.upper()
-    if code in inventory:
-        del inventory[code]
+    item = Item.query.filter_by(item_code=code).first()
+    if item:
+        db.session.delete(item)
+        db.session.commit()
     return redirect(url_for('index'))
 
 @app.route('/mark_sold/<code>')
 @login_required
 def mark_sold(code):
     code = code.upper()
-    if code in inventory:
-        inventory[code]['sold'] = True
+    item = Item.query.filter_by(item_code=code).first()
+    if item:
+        item.sold = True
+        db.session.commit()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
