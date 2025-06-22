@@ -24,6 +24,16 @@ class Item(db.Model):
     price = db.Column(db.Float, nullable=False)
     sizes = db.Column(db.String(100))  # store sizes as comma-separated string
     sold = db.Column(db.Boolean, default=False)
+    
+class Receipt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    buyer_name = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    item_code = db.Column(db.String(10), nullable=False)
+    size = db.Column(db.String(10), nullable=True)
+    brand = db.Column(db.String(100), nullable=True)
+    paid = db.Column(db.Boolean, default=False)
+
 
 # Create tables and add initial data if needed
 def create_tables():
@@ -133,6 +143,39 @@ def mark_sold(code):
         item.sold = True
         db.session.commit()
     return redirect(url_for('index'))
+
+@app.route('/receipts', methods=['GET', 'POST'])
+@login_required
+def receipts():
+    message = ''
+    receipts_list = Receipt.query.all()
+
+    if request.method == 'POST':
+        name = request.form['buyer_name'].strip()
+        phone = request.form['phone_number'].strip()
+        item_code = request.form['item_code'].strip().upper()
+        size = request.form['size'].strip().upper()
+        brand = request.form['brand'].strip()
+        paid = request.form.get('paid') == 'on'
+
+        if name and phone and item_code:
+            new_receipt = Receipt(
+                buyer_name=name,
+                phone_number=phone,
+                item_code=item_code,
+                size=size,
+                brand=brand,
+                paid=paid
+            )
+            db.session.add(new_receipt)
+            db.session.commit()
+            message = f"Receipt added for {name}"
+            receipts_list = Receipt.query.all()  # Refresh list
+        else:
+            message = "Name, phone number and item code are required."
+
+    return render_template('receipts.html', receipts=receipts_list, message=message)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

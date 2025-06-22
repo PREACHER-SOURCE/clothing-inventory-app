@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Receipts Page</h1>
+        <a href="{{ url_for('index') }}">← Back to Inventory</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <h2>Add New Receipt</h2>
+        <form method="POST" class="add-form">
+            <input type="text" name="buyer_name" placeholder="Buyer's Name" required>
+            <input type="text" name="phone_number" placeholder="Phone Number" required>
+            <input type="text" name="item_code" placeholder="Item Code" required>
+            <input type="text" name="size" placeholder="Size (e.g. M)">
+            <input type="text" name="brand" placeholder="Brand Name">
+            <label><input type="checkbox" name="paid"> Paid</label>
+            <button type="submit">Add Receipt</button>
+        </form>
+
+        <h2>Receipt Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Item Code</th>
+                    <th>Size</th>
+                    <th>Brand</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in receipts %}
+                <tr class="{{ 'sold' if r.paid }}">
+                    <td>{{ r.buyer_name }}</td>
+                    <td>{{ r.phone_number }}</td>
+                    <td>{{ r.item_code }}</td>
+                    <td>{{ r.size }}</td>
+                    <td>{{ r.brand }}</td>
+                    <td>{{ 'Paid' if r.paid else 'Not Paid' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">No receipts found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
