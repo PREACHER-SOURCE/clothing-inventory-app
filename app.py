@@ -176,6 +176,28 @@ def receipts():
 
     return render_template('receipts.html', receipts=receipts_list, message=message)
 
+@app.route('/edit_item', methods=['POST'])
+@login_required
+def edit_item():
+    code = request.form['item_code'].strip().upper()
+    name = request.form['item_name'].strip()
+    desc = request.form['item_desc'].strip()
+    price = request.form['item_price'].strip()
+    sizes = request.form['item_sizes'].strip()
+
+    item = Item.query.filter_by(item_code=code).first()
+    if item:
+        try:
+            item.name = name
+            item.description = desc
+            item.price = float(price)
+            item.sizes = ','.join([s.strip().upper() for s in sizes.split(',')]) if sizes else ''
+            db.session.commit()
+        except ValueError:
+            pass  # You can flash a message here
+    return redirect(url_for('index'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -10,7 +10,6 @@
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         <a href="{{ url_for('receipts') }}">Go to Receipts</a>
 
-
         {% if message %}
             <p class="message">{{ message }}</p>
         {% endif %}
@@ -60,6 +59,13 @@
                         {% if not item.sold %}
                         <a href="{{ url_for('mark_sold', code=item.item_code) }}" class="btn sold-btn">Mark Sold</a>
                         {% endif %}
+                        <a href="#" class="btn edit-btn"
+                           data-code="{{ item.item_code }}"
+                           data-name="{{ item.name }}"
+                           data-desc="{{ item.description }}"
+                           data-price="{{ item.price }}"
+                           data-sizes="{{ item.sizes }}"
+                           onclick="openEditModal(this)">Edit</a>
                         <a href="{{ url_for('delete_item', code=item.item_code) }}" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete {{ item.item_code }}?')">Delete</a>
                     </td>
                 </tr>
@@ -71,5 +77,44 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span onclick="closeEditModal()" class="close">&times;</span>
+            <h2>Edit Item</h2>
+            <form method="POST" action="{{ url_for('edit_item') }}">
+                <input type="hidden" id="edit_code" name="item_code">
+                <input type="text" id="edit_name" name="item_name" placeholder="Item Name" required>
+                <input type="text" id="edit_desc" name="item_desc" placeholder="Description">
+                <input type="text" id="edit_price" name="item_price" placeholder="Price" required>
+                <input type="text" id="edit_sizes" name="item_sizes" placeholder="Sizes (comma separated)">
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function openEditModal(button) {
+            document.getElementById('edit_code').value = button.getAttribute('data-code');
+            document.getElementById('edit_name').value = button.getAttribute('data-name');
+            document.getElementById('edit_desc').value = button.getAttribute('data-desc');
+            document.getElementById('edit_price').value = button.getAttribute('data-price');
+            document.getElementById('edit_sizes').value = button.getAttribute('data-sizes');
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
