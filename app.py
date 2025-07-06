@@ -177,26 +177,7 @@ def receipts():
 
     return render_template('receipts.html', receipts=receipts_list, message=message)
 
-@app.route('/edit_item', methods=['POST'])
-@login_required
-def edit_item():
-    code = request.form['item_code'].strip().upper()
-    name = request.form['item_name'].strip()
-    desc = request.form['item_desc'].strip()
-    price = request.form['item_price'].strip()
-    sizes = request.form['item_sizes'].strip()
 
-    item = Item.query.filter_by(item_code=code).first()
-    if item:
-        try:
-            item.name = name
-            item.description = desc
-            item.price = float(price)
-            item.sizes = ','.join([s.strip().upper() for s in sizes.split(',')]) if sizes else ''
-            db.session.commit()
-        except ValueError:
-            pass  # You can flash a message here
-    return redirect(url_for('index'))
 
 # Inventory edit
 @app.route('/edit_item', methods=['POST'])
@@ -221,7 +202,31 @@ def edit_item():
     return redirect(url_for('index'))
 
 
+# Receipt edit
+@app.route('/edit_receipt', methods=['POST'])
+def edit_receipt():
+    if 'user' not in session:
+        return redirect(url_for('login'))
 
+    receipt_id = request.form.get('receipt_id')
+    buyer_name = request.form.get('buyer_name')
+    phone_number = request.form.get('phone_number')
+    item_code = request.form.get('item_code')
+    size = request.form.get('size')
+    brand = request.form.get('brand')
+    paid = 'paid' in request.form
+
+    # Update the receipt in your database
+    conn = get_db_connection()
+    conn.execute(
+        'UPDATE receipts SET buyer_name=?, phone_number=?, item_code=?, size=?, brand=?, paid=? WHERE receipt_id=?',
+        (buyer_name, phone_number, item_code, size, brand, int(paid), receipt_id)
+    )
+    conn.commit()
+    conn.close()
+
+    flash('Receipt updated successfully!')
+    return redirect(url_for('receipts'))
 
 
 
