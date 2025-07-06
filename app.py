@@ -177,7 +177,26 @@ def receipts():
 
     return render_template('receipts.html', receipts=receipts_list, message=message)
 
+@app.route('/edit_item', methods=['POST'])
+@login_required
+def edit_item():
+    code = request.form['item_code'].strip().upper()
+    name = request.form['item_name'].strip()
+    desc = request.form['item_desc'].strip()
+    price = request.form['item_price'].strip()
+    sizes = request.form['item_sizes'].strip()
 
+    item = Item.query.filter_by(item_code=code).first()
+    if item:
+        try:
+            item.name = name
+            item.description = desc
+            item.price = float(price)
+            item.sizes = ','.join([s.strip().upper() for s in sizes.split(',')]) if sizes else ''
+            db.session.commit()
+        except ValueError:
+            pass  # You can flash a message here
+    return redirect(url_for('index'))
 
 # Inventory edit
 @app.route('/edit_item', methods=['POST'])
@@ -202,28 +221,7 @@ def edit_item():
     return redirect(url_for('index'))
 
 
-# Receipt edit
-@app.route('/edit_receipt', methods=['POST'])
-@login_required
-def edit_receipt():
-    receipt_id = request.form['receipt_id']
-    buyer_name = request.form['buyer_name']
-    phone = request.form['phone']
-    item_code = request.form['item_code']
-    size = request.form['size']
-    brand = request.form['brand']
-    paid = request.form['paid']
 
-    receipt = Receipt.query.get(receipt_id)
-    if receipt:
-        receipt.buyer_name = buyer_name
-        receipt.phone = phone
-        receipt.item_code = item_code
-        receipt.size = size
-        receipt.brand = brand
-        receipt.paid = True if paid == 'yes' else False
-        db.session.commit()
-    return redirect(url_for('receipts'))
 
 
 
