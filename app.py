@@ -153,7 +153,7 @@ def receipts():
 
     if request.method == 'POST':
         name = request.form['buyer_name'].strip()
-        phone = request.form['phone_number'].strip()
+        phone = request.form['phone'].strip()  # <-- CHANGED
         item_code = request.form['item_code'].strip().upper()
         size = request.form['size'].strip().upper()
         brand = request.form['brand'].strip()
@@ -162,7 +162,7 @@ def receipts():
         if name and phone and item_code:
             new_receipt = Receipt(
                 buyer_name=name,
-                phone_number=phone,
+                phone=phone,
                 item_code=item_code,
                 size=size,
                 brand=brand,
@@ -171,7 +171,7 @@ def receipts():
             db.session.add(new_receipt)
             db.session.commit()
             message = f"Receipt added for {name}"
-            receipts_list = Receipt.query.all()  # Refresh list
+            receipts_list = Receipt.query.all()
         else:
             message = "Name, phone number and item code are required."
 
@@ -204,28 +204,26 @@ def edit_item():
 
 # Receipt edit
 @app.route('/edit_receipt', methods=['POST'])
+@login_required
 def edit_receipt():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-
     receipt_id = request.form.get('receipt_id')
     buyer_name = request.form.get('buyer_name')
-    phone_number = request.form.get('phone_number')
+    phone = request.form.get('phone')  # <-- CHANGED
     item_code = request.form.get('item_code')
     size = request.form.get('size')
     brand = request.form.get('brand')
     paid = 'paid' in request.form
 
-    # Update the receipt in your database
-    conn = get_db_connection()
-    conn.execute(
-        'UPDATE receipts SET buyer_name=?, phone_number=?, item_code=?, size=?, brand=?, paid=? WHERE receipt_id=?',
-        (buyer_name, phone_number, item_code, size, brand, int(paid), receipt_id)
-    )
-    conn.commit()
-    conn.close()
+    receipt = Receipt.query.filter_by(id=receipt_id).first()
+    if receipt:
+        receipt.buyer_name = buyer_name
+        receipt.phone = phone
+        receipt.item_code = item_code
+        receipt.size = size
+        receipt.brand = brand
+        receipt.paid = paid
+        db.session.commit()
 
-    flash('Receipt updated successfully!')
     return redirect(url_for('receipts'))
 
 

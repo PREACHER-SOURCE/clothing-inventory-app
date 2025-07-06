@@ -17,7 +17,7 @@
         <h2>Add New Receipt</h2>
         <form method="POST" class="add-form">
             <input type="text" name="buyer_name" placeholder="Buyer's Name" required>
-            <input type="text" name="phone_number" placeholder="Phone Number" required>
+            <input type="text" name="phone" placeholder="Phone Number" required> <!-- CHANGED -->
             <input type="text" name="item_code" placeholder="Item Code" required>
             <input type="text" name="size" placeholder="Size (e.g. M)">
             <input type="text" name="brand" placeholder="Brand Name">
@@ -51,7 +51,7 @@
                         <a href="#" class="btn edit-btn"
                            data-id="{{ r.receipt_id }}"
                            data-name="{{ r.buyer_name }}"
-                           data-phone="{{ r.phone_number }}"
+                           data-phone="{{ r.phone }}" <!-- CHANGED -->
                            data-item="{{ r.item_code }}"
                            data-size="{{ r.size }}"
                            data-brand="{{ r.brand }}"
@@ -76,7 +76,7 @@
             <form method="POST" action="{{ url_for('edit_receipt') }}">
                 <input type="hidden" id="edit_receipt_id" name="receipt_id">
                 <input type="text" id="edit_buyer_name" name="buyer_name" placeholder="Buyer's Name" required>
-                <input type="text" id="edit_phone_number" name="phone_number" placeholder="Phone Number" required>
+                <input type="text" id="edit_phone" name="phone" placeholder="Phone Number" required> <!-- CHANGED -->
                 <input type="text" id="edit_item_code" name="item_code" placeholder="Item Code" required>
                 <input type="text" id="edit_size" name="size" placeholder="Size (e.g. M)">
                 <input type="text" id="edit_brand" name="brand" placeholder="Brand Name">
@@ -90,7 +90,7 @@
     function openReceiptEditModal(button) {
         document.getElementById('edit_receipt_id').value = button.getAttribute('data-id');
         document.getElementById('edit_buyer_name').value = button.getAttribute('data-name');
-        document.getElementById('edit_phone_number').value = button.getAttribute('data-phone');
+        document.getElementById('edit_phone').value = button.getAttribute('data-phone'); // CHANGED
         document.getElementById('edit_item_code').value = button.getAttribute('data-item');
         document.getElementById('edit_size').value = button.getAttribute('data-size');
         document.getElementById('edit_brand').value = button.getAttribute('data-brand');
