@@ -302,7 +302,7 @@
 }
 
 .modal-content {
-    background: rgba(0, 0, 0, 0.479);
+    background: rgb(255, 255, 255);
     margin: 10% auto;
     padding: 20px;
     width: 90%;
